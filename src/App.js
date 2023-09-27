@@ -10,16 +10,54 @@ const gennerateBoard = (size) => {
   return newBoard;
 };
 
-const checkForWin = (board) => {
-  //horizontal
+const checkHorizontal = (board) => {
   for (let row of board) {
     const rowSet = new Set(row);
     if (rowSet.size == 1 && !rowSet.has(undefined)) {
       return true;
     }
   }
+};
+const rowToColumns = (board) => {
+  const newBoard = [];
+  let column = 0;
+  while (column < board.length) {
+    const newRow = [];
+    for (let row = 0; row < board.length; row++) {
+      newRow.push(board[row][column]);
+    }
+    newBoard.push(newRow);
+    column++;
+  }
+  return newBoard;
+};
+
+const diagonaleToRow = (board) => {
+  const newBoard = [[], []];
+  let increment = 0;
+  let decrement = board.length - 1;
+  while (increment < board.length) {
+    newBoard[0].push(board[increment][increment]);
+    newBoard[1].push(board[increment][decrement]);
+    increment++;
+    decrement--;
+  }
+  return newBoard;
+};
+
+const checkForWin = (board) => {
+  //horizontal
+  if (checkHorizontal(board)) {
+    return true;
+  }
   //vertical
+  if (checkHorizontal(rowToColumns(board))) {
+    return true;
+  }
   //diagnoale
+  if (checkHorizontal(diagonaleToRow(board))) {
+    return true;
+  }
 };
 
 function App() {
@@ -28,13 +66,12 @@ function App() {
   const [currentPlayer, setCurrentPlayer] = useState("X");
 
   const handleClick = (row, col) => {
-    console.log("row===>", row);
-    console.log("col===>", col);
-
     board[row][col] = currentPlayer;
     setBoard([...board]);
     if (checkForWin(board)) {
-      alert(currentPlayer + " wins");
+      console.log(currentPlayer + " wins");
+      setBoard(gennerateBoard(3));
+      setCurrentPlayer("X");
     }
     setCurrentPlayer(currentPlayer == "X" ? "O" : "X");
   };
